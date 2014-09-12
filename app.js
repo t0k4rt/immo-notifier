@@ -42,7 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /**
  * routes
  */
-app.use('/', new SelogerParser(app, mongoose, redisStore));
+app.use('/', new SelogerParser(app, redisStore));
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {

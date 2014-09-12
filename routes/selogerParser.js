@@ -7,7 +7,7 @@ var express = require('express')
 
 var RessourceModel = require('../models/ressource');
 
-module.exports = function Router(app, mongoose, redisStore) {
+module.exports = function Router(app, redisStore) {
   var router = express.Router();
 
   router.get('/', function(req, res) {
