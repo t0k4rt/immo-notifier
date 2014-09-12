@@ -91,6 +91,7 @@ Q.fcall(function () {return url.parse(_url)})
   })
   // we then analyze the content of the page to parse meaningfull informations
   .then(function(newSeloger){
+    console.log('Parsing new articles info');
     function analyzeSelogerUrl(url) {
       var deferred = Q.defer();
       request(url, function (error, response, body) {
@@ -109,9 +110,13 @@ Q.fcall(function () {return url.parse(_url)})
             url: url,
             prix: $("#price").text().trim().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
             tel: $(".action__detail-tel").first().text().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
-            surface: (reSurface.exec(infos))[1],
-            honoraires: (reHonoraires.exec(infos))[1]
+            surface: (reSurface.exec(infos))[1]
           };
+
+          var hono = reHonoraires.exec(infos);
+          if(hono) {
+            result.honoraires = hono[1]
+          }
 
           deferred.resolve(result);
         }
