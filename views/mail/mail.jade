@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  each item, index in result
+    p
+      ul
+        li
+          a(href="item.value.url") #{item.value.url}
+        if item.value.prix
+          li
+            prix :  #{item.value.prix}
+        if item.value.tel
+          li
+            téléphone :  #{item.value.tel}
+        if item.value.url
+          li
+            surface :  #{item.value.surface}
+        if item.value.honoraires
+          li
+            honoraires :  #{item.value.honoraires}
+
+

@@ -5,7 +5,8 @@ var redis = require('redis')
   , Cheerio = require('cheerio')
   , request = require('request')
   , Q = require('q')
-  , nodemailer = require('nodemailer');
+  , nodemailer = require('nodemailer')
+  , jade = require('jade');
 
 /**
  * Mandrill setup
@@ -34,6 +35,12 @@ if(redisUrl.auth) {
   var auth = (redisUrl.auth.split(':'))[1];
   redisStore.auth(auth, function(){console.log("redisStore ready")});
 }
+
+
+/**
+ * Jade setup
+ */
+var mailTemplate = jade.compileFile('../views/mail/mail.jade', {pretty: true});
 
 var _url = "http://www.seloger.com/list.htm?ci=750103,750109,750110,750111,750117,750118,750119,750120&idtt=1&idtypebien=1&leadali=L001&orientation=VueetOrientation&pxmax=900&surfacemin=35&tri=d_dt_crea";
 
@@ -136,13 +143,13 @@ Q.fcall(function () {return url.parse(_url)})
     //console.error(error);
   })
   .done(function(result){
-    console.log(result);
+
     if(result.length > 0)
       transporter.sendMail({
         from: 'alerte@seloger.com',
         to: 'alexandre.assouad@gmail.com',
         subject: 'we found new articles for you',
-        text: result
+        text: mailTemplate({result: result})
       });
     process.exit(1);
   });
