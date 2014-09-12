@@ -46,7 +46,7 @@ var _url = "http://www.seloger.com/list.htm?ci=750103,750109,750110,750111,75011
 
 // create promise, return parsed url
 Q.fcall(function () {return url.parse(_url)})
-  //we first get the liste of articles from seloger page
+  //we first get the list of articles from seloger page
   .then(function(ressourceParams){
     var deferred = Q.defer();
     console.log('loading listing url');
