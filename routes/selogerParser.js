@@ -116,8 +116,8 @@ module.exports = function Router(app, redisStore, transporter) {
       from: 'alexandre.assouad@gmail.com',
       to: 'alexandre.assouad@gmail.com',
       subject: 'we found new articles for you',
-      text: result
-      }, function(error, info){
+      text: 'testmail'
+    }, function(error, info){
       if(error){
         console.log(error);
         res.send('notok');
