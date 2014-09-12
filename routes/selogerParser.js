@@ -80,9 +80,13 @@ module.exports = function Router(app, redisStore) {
                 url: url,
                 prix: $("#price").text().trim().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
                 tel: $(".action__detail-tel").first().text().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
-                surface: (reSurface.exec(infos))[1],
-                honoraires: (reHonoraires.exec(infos))[1]
+                surface: (reSurface.exec(infos))[1]
               };
+
+              var hono = reHonoraires.exec(infos);
+              if(hono) {
+                result.honoraires = hono[1]
+              }
 
               deferred.resolve(result);
             }
