@@ -4,8 +4,6 @@ var express = require('express')
   , logger = require('morgan')
   , cookieParser = require('cookie-parser')
   , bodyParser = require('body-parser')
-  , mongodb = require('mongodb')
-  , mongoose = require('mongoose-q')(require('mongoose'))
   , redis = require('redis')
   , debug = require('debug')('my-application');
 
