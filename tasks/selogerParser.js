@@ -139,7 +139,7 @@ Q.fcall(function () {return url.parse(_url)})
     console.log(result);
     if(result.length > 0)
       transporter.sendMail({
-        from: 'alexandre.assouad@gmail.com',
+        from: 'alerte@seloger.com',
         to: 'alexandre.assouad@gmail.com',
         subject: 'we found new articles for you',
         text: result

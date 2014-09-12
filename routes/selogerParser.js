@@ -9,6 +9,10 @@ module.exports = function Router(app, redisStore, transporter) {
   var router = express.Router();
 
   router.get('/', function(req, res) {
+    res.send('online !!');
+  });
+
+  router.get('/checkarticles', function(req, res) {
     var _url = "http://www.seloger.com/list.htm?ci=750103,750109,750110,750111,750117,750118,750119,750120&idtt=1&idtypebien=1&leadali=L001&orientation=VueetOrientation&pxmax=900&surfacemin=35&tri=d_dt_crea";
 
 
