@@ -5,8 +5,6 @@ var express = require('express')
   , Q = require('q')
   , _ = require('lodash');
 
-var RessourceModel = require('../models/ressource');
-
 module.exports = function Router(app, redisStore) {
   var router = express.Router();
 
