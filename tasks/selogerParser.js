@@ -1,4 +1,4 @@
-#! /app/bin/node
+#!/usr/bin/env node
 var redis = require('redis')
   , debug = require('debug')('my-application')
   , url = require('url')
