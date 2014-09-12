@@ -113,7 +113,7 @@ module.exports = function Router(app, redisStore, transporter) {
 
   router.get('/testmail', function(req, res) {
     transporter.sendMail({
-      from: 'alexandre.assouad@gmail.com',
+      from: 'alerte@seloger.com',
       to: 'alexandre.assouad@gmail.com',
       subject: 'we found new articles for you',
       text: 'testmail'
