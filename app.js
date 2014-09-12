@@ -5,7 +5,10 @@ var express = require('express')
   , cookieParser = require('cookie-parser')
   , bodyParser = require('body-parser')
   , redis = require('redis')
-  , debug = require('debug')('my-application');
+  , debug = require('debug')('my-application')
+  , nodemailer = require('nodemailer');
+
+
 
 var SelogerParser = require('./routes/selogerParser');
 
@@ -28,6 +31,21 @@ if(redisUrl.auth) {
   redisStore.auth(auth, function(){console.log("redisStore ready")});
 }
 
+/**
+ * Mandrill setup
+ */
+var transporter = nodemailer.createTransport();
+if(process.env.MANDRILL_USERNAME) {
+  transporter = nodemailer.createTransport({
+    port: 587,
+    host: "smtp.mandrillapp.com",
+    service: 'Mandrill',
+    auth: {
+      user: process.env.MANDRILL_USERNAME,
+      pass: process.env.MANDRILL_APIKEY
+    }
+  });
+}
 
 /**
  * middleware
@@ -42,7 +60,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /**
  * routes
  */
-app.use('/', new SelogerParser(app, redisStore));
+app.use('/', new SelogerParser(app, redisStore, transporter));
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {

@@ -5,7 +5,7 @@ var express = require('express')
   , Q = require('q')
   , _ = require('lodash');
 
-module.exports = function Router(app, redisStore) {
+module.exports = function Router(app, redisStore, transporter) {
   var router = express.Router();
 
   router.get('/', function(req, res) {
@@ -109,6 +109,23 @@ module.exports = function Router(app, redisStore) {
         console.log(result);
         res.send(result);
       });
+  });
+
+  router.get('/testmail', function(req, res) {
+    transporter.sendMail({
+      from: 'alexandre.assouad@gmail.com',
+      to: 'alexandre.assouad@gmail.com',
+      subject: 'we found new articles for you',
+      text: result
+      }, function(error, info){
+      if(error){
+        console.log(error);
+        res.send('notok');
+      }else{
+        console.log('Message sent: ' + info.response);
+        res.send('ok');
+      }
+    });
   });
 
   return router;
