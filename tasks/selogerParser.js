@@ -60,7 +60,6 @@ transporter.sendMail({
   }else{
     console.log('Message sent: ' + info.response);
   }
-  process.exit(1);
 });
 
 
