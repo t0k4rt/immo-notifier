@@ -189,8 +189,8 @@ Q.fcall(function () {return url.parse(_url)})
           text: mailTemplate({result: result})
         },
         function(err, info) {
-          if(error){
-            console.log(error);
+          if(err){
+            console.log(err);
           }else{
             console.log('Message sent: ' + info.response);
           }
