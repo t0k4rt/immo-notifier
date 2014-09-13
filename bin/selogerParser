@@ -52,8 +52,8 @@ var mailTemplate = jade.compileFile('./views/mail/mail.jade', {pretty: true});
 transporter.sendMail({
   from: 'alerte@seloger.com',
   to: 'alexandre.assouad@gmail.com',
-  subject: 'we found new articles for you',
-  text: mailTemplate({result: test})
+  subject: 'test',
+  html: mailTemplate({result: test})
 }, function(error, info){
   if(error){
     console.log(error);
