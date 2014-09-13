@@ -52,8 +52,8 @@ var mailTemplate = jade.compileFile('./views/mail/mail.jade', {pretty: true});
 transporter.sendMail({
   from: 'alerte@seloger.com',
   to: 'alexandre.assouad@gmail.com',
-  subject: 'we found new articles for you',
-  text: mailTemplate({result: test})
+  subject: 'test',
+  html: mailTemplate({result: test})
 }, function(error, info){
   if(error){
     console.log(error);
@@ -76,11 +76,6 @@ if(redisUrl.auth) {
   redisStore.auth(auth, function(){console.log("redisStore ready")});
 }
 
-
-/**
- * Jade setup
- */
-/*var mailTemplate = jade.compileFile('./views/mail/mail.jade', {pretty: true});
 
 var _url = "http://www.seloger.com/list.htm?ci=750103,750109,750110,750111,750117,750118,750119,750120&idtt=1&idtypebien=1&leadali=L001&orientation=VueetOrientation&pxmax=900&surfacemin=35&tri=d_dt_crea";
 
@@ -150,8 +145,8 @@ Q.fcall(function () {return url.parse(_url)})
 
           var infos = $(".description-liste").first().text();
 
-          var reSurface = /.*(surface.*m²).*//*ig;
-          var reHonoraires = /.*honoraires ttc : (.*€).*//*ig;
+          var reSurface = /.*(surface.*m²)./ig;
+          var reHonoraires = /.*honoraires ttc : (.*€)./ig;
 
           var result = {
             url: url,
@@ -191,14 +186,17 @@ Q.fcall(function () {return url.parse(_url)})
           subject: 'we found new articles for you',
           text: mailTemplate({result: result})
         },
-        function(err, res) {
-          console.log(err, res);
-          // we exit process only when mail has been sent
-          //process.exit(1);
+        function(err, info) {
+          if(error){
+            console.log(error);
+          }else{
+            console.log('Message sent: ' + info.response);
+          }
+          process.exit(1);
         });
     }
     else {
-      //process.exit(1);
+      process.exit(1);
     }
 
-  });*/
+  });
