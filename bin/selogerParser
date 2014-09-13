@@ -5,7 +5,8 @@ var redis = require('redis')
   , Cheerio = require('cheerio')
   , request = require('request')
   , Q = require('q')
-  , nodemailer = require('nodemailer');
+  , nodemailer = require('nodemailer')
+  , jade = require('jade');
 
 /**
  * Mandrill setup
@@ -18,10 +19,26 @@ if(process.env.MANDRILL_USERNAME) {
     service: 'Mandrill',
     auth: {
       user: process.env.MANDRILL_USERNAME,
-      pass: process.env.MANDRILL_APIKEY
+      pass: process.env.MANDRILL_APIKEY,
     }
   });
 }
+
+transporter.sendMail({
+  from: 'alerte@seloger.com',
+  to: 'alexandre.assouad@gmail.com',
+  subject: 'we found new articles for you',
+  text: 'testmail'
+}, function(error, info){
+  if(error){
+    console.log(error);
+    res.send('notok');
+  }else{
+    console.log('Message sent: ' + info.response);
+    res.send('ok');
+  }
+});
+
 
 /**
  * redis setup
@@ -35,11 +52,17 @@ if(redisUrl.auth) {
   redisStore.auth(auth, function(){console.log("redisStore ready")});
 }
 
+
+/**
+ * Jade setup
+ */
+var mailTemplate = jade.compileFile('../views/mail/mail.jade', {pretty: true});
+
 var _url = "http://www.seloger.com/list.htm?ci=750103,750109,750110,750111,750117,750118,750119,750120&idtt=1&idtypebien=1&leadali=L001&orientation=VueetOrientation&pxmax=900&surfacemin=35&tri=d_dt_crea";
 
 // create promise, return parsed url
 Q.fcall(function () {return url.parse(_url)})
-  //we first get the liste of articles from seloger page
+  //we first get the list of articles from seloger page
   .then(function(ressourceParams){
     var deferred = Q.defer();
     console.log('loading listing url');
@@ -65,7 +88,7 @@ Q.fcall(function () {return url.parse(_url)})
     console.log('Compare with stored ids');
     redisStore.smembers('selogerIds',function(err, obj){console.log(obj)});
 
-      function getNewSelogerUrl(value) {
+    function getNewSelogerUrl(value) {
       var deferred = Q.defer();
       redisStore.sismember('selogerIds', value.id, function(err, obj){
         if(err)
@@ -136,13 +159,22 @@ Q.fcall(function () {return url.parse(_url)})
     //console.error(error);
   })
   .done(function(result){
-    console.log(result);
-    if(result.length > 0)
+    if(result.length > 0) {
+      console.log("should send email");
       transporter.sendMail({
-        from: 'alerte@seloger.com',
-        to: 'alexandre.assouad@gmail.com',
-        subject: 'we found new articles for you',
-        text: result
-      });
-    process.exit(1);
+          from: 'alerte@seloger.com',
+          to: 'alexandre.assouad@gmail.com',
+          subject: 'we found new articles for you',
+          text: mailTemplate({result: result})
+        },
+        function(err, res) {
+          console.log(err, res);
+          // we exit process only when mail has been sent
+          //process.exit(1);
+        });
+    }
+    else {
+      //process.exit(1);
+    }
+
   });

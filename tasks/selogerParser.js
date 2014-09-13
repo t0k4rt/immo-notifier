@@ -19,10 +19,26 @@ if(process.env.MANDRILL_USERNAME) {
     service: 'Mandrill',
     auth: {
       user: process.env.MANDRILL_USERNAME,
-      pass: process.env.MANDRILL_APIKEY
+      pass: process.env.MANDRILL_APIKEY,
     }
   });
 }
+
+transporter.sendMail({
+  from: 'alerte@seloger.com',
+  to: 'alexandre.assouad@gmail.com',
+  subject: 'we found new articles for you',
+  text: 'testmail'
+}, function(error, info){
+  if(error){
+    console.log(error);
+    res.send('notok');
+  }else{
+    console.log('Message sent: ' + info.response);
+    res.send('ok');
+  }
+});
+
 
 /**
  * redis setup
@@ -72,7 +88,7 @@ Q.fcall(function () {return url.parse(_url)})
     console.log('Compare with stored ids');
     redisStore.smembers('selogerIds',function(err, obj){console.log(obj)});
 
-      function getNewSelogerUrl(value) {
+    function getNewSelogerUrl(value) {
       var deferred = Q.defer();
       redisStore.sismember('selogerIds', value.id, function(err, obj){
         if(err)
@@ -143,13 +159,22 @@ Q.fcall(function () {return url.parse(_url)})
     //console.error(error);
   })
   .done(function(result){
-
-    if(result.length > 0)
+    if(result.length > 0) {
+      console.log("should send email");
       transporter.sendMail({
-        from: 'alerte@seloger.com',
-        to: 'alexandre.assouad@gmail.com',
-        subject: 'we found new articles for you',
-        text: mailTemplate({result: result})
-      });
-    process.exit(1);
+          from: 'alerte@seloger.com',
+          to: 'alexandre.assouad@gmail.com',
+          subject: 'we found new articles for you',
+          text: mailTemplate({result: result})
+        },
+        function(err, res) {
+          console.log(err, res);
+          // we exit process only when mail has been sent
+          //process.exit(1);
+        });
+    }
+    else {
+      //process.exit(1);
+    }
+
   });
