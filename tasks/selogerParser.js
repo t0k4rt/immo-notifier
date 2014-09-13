@@ -24,8 +24,7 @@ if(process.env.MANDRILL_USERNAME) {
     }
   });
 }
-
-/*var test = [ { state: 'fulfilled',
+var test = [ { state: 'fulfilled',
   value:
   { url: 'http://www.seloger.com/annonces/locations/appartement/paris-20eme-75/plaine/92200301.htm?ci=750103,750109,750110,750111,750117,750118,750119,750120&idtt=1&idtypebien=1&leadali=L001&orientation=VueetOrientation&pxmax=900&surfacemin=35&tri=d_dt_crea&bd=Li_LienAnn_1',
     prix: '853,10 € CC',
@@ -61,7 +60,7 @@ transporter.sendMail({
   }else{
     console.log('Message sent: ' + info.response);
   }
-});*/
+});
 
 
 /**
