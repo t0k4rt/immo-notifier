@@ -6,7 +6,8 @@ var redis = require('redis')
   , request = require('request')
   , Q = require('q')
   , nodemailer = require('nodemailer')
-  , jade = require('jade');
+  , jade = require('jade')
+  , Pushover = require('node-pushover');
 
 /**
  * Mandrill setup
@@ -27,6 +28,13 @@ if(process.env.MANDRILL_USERNAME) {
 
 var mailTemplate = jade.compileFile('./views/mail/mail.jade', {pretty: true});
 
+/**
+ *Pushover setup
+ */
+var push = new Pushover({
+  token: "aNMGCoq3foJPjk4jgkavfC9RGXgJXr",
+  user: "uNc7YJaajnsZ6iFewtKL4s5BHABLoR"
+});
 
 /**
  * redis setup
@@ -150,7 +158,7 @@ Q.fcall(function () {return url.parse(_url)})
       transporter.sendMail({
           from: 'alerte@seloger.com',
           to: 'alexandre.assouad@gmail.com',
-          subject: 'we found new articles for you',
+          subject: 'We found new articles for you',
           html: mailTemplate({result: result})
         },
         function(err, info) {
@@ -159,7 +167,14 @@ Q.fcall(function () {return url.parse(_url)})
           }else{
             console.log('Message sent: ' + info.response);
           }
-          process.exit(1);
+          push.send("We found " + result.length + "new articles for you", "go get them "+_url, function (err, res){
+            if(err){
+              console.log(err);
+            }else{
+              console.log("Notif send successfully");
+              process.exit(1);
+            }
+          });
         });
     }
     else {
