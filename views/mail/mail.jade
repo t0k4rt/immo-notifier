@@ -8,7 +8,9 @@ block content
     p
       ul
         li
-          a(href="item.value.url") #{item.value.url}
+          a(href='item.value.url', target='_blank') lien vers l'annonce
+        if item.value.description
+          li description : #{item.value.description}
         if item.value.prix
           li prix : #{item.value.prix}
         if item.value.tel

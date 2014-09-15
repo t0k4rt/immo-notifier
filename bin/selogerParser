@@ -123,7 +123,8 @@ Q.fcall(function () {return url.parse(_url)})
           var result = {
             url: url,
             prix: $("#price").text().trim().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
-            tel: $(".action__detail-tel").first().text().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," ")
+            tel: $(".action__detail-tel").first().text().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
+            description: $('p.description').text()
           };
 
           var surface = reSurface.exec(infos);
@@ -149,36 +150,53 @@ Q.fcall(function () {return url.parse(_url)})
     });
     return Q.allSettled(promises);
   })
-  .catch(function(error){
-    //console.error(error);
+  .then(function(results){
+    function sendPush(annonce) {
+      var deferred = Q.defer();
+      push.send("Nouvelle annonce de location", annonce.value.prix + " / " + annonce.value.surface + " lien : " + annonce.value.url    , function (err, res){
+        if(err){
+          deferred.reject(new Error(err));
+        }else{
+          deferred.resolve(annonce.value);
+        }
+      });
+      return deferred.promise;
+    }
+
+    var promises = [];
+    results.forEach(function(elt){
+      if(elt.state == 'fulfilled') {
+        promises.push(sendPush(elt))
+      }
+    });
+    return Q.allSettled(promises);
+
   })
-  .done(function(result){
-    if(result.length > 0) {
-      console.log("should send email");
+  .then(function(results){
+    if(results.length > 0) {
+      var deferred = Q.defer();
       transporter.sendMail({
           from: 'alerte@seloger.com',
           to: 'alexandre.assouad@gmail.com',
           subject: 'We found new articles for you',
-          html: mailTemplate({result: result})
+          html: mailTemplate({result: results})
         },
         function(err, info) {
-          if(err){
-            console.log(err);
-          }else{
-            console.log('Message sent: ' + info.response);
-          }
-          push.send("We found " + result.length + "new articles for you", "go get them "+_url, function (err, res){
-            if(err){
-              console.log(err);
-            }else{
-              console.log("Notif send successfully");
-              process.exit(1);
-            }
-          });
-        });
+          if(err)
+            deferred.reject(new Error(err));
+          else
+            deferred.resolve(results);
+        }
+      );
     }
-    else {
-      process.exit(1);
-    }
+    else
+      deferred.resolve(results);
 
+    return deferred.promise;
+  })
+  .catch(function(errors){
+    console.error(errors);
+  })
+  .done(function(results){
+    process.exit(1);
   });
