@@ -117,13 +117,13 @@ Q.fcall(function () {return url.parse(_url)})
 
           var infos = $(".description-liste").first().text();
 
-          var reSurface = /.*(surface.*m²)./ig;
-          var reHonoraires = /.*honoraires ttc : (.*€)./ig;
+          var reSurface = /.*surface de (.*m²).*/ig;
+          var reHonoraires = /.*honoraires ttc : (.*€).*/ig;
 
           var result = {
             url: url,
             prix: $("#price").text().trim().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
-            tel: $(".action__detail-tel").first().text().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
+            tel: $(".action__detail-tel").first().text().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," ")
           };
 
           var surface = reSurface.exec(infos);
