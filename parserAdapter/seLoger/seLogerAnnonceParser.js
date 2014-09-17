@@ -24,16 +24,24 @@ var url = require('url')
 
           var infos = $(".description-liste").first().text();
 
-          var reSurface = /.*(surface.*m²).*/ig;
+          var reSurface = /.*surface de (.*m²).*/ig;
           var reHonoraires = /.*honoraires ttc : (.*€).*/ig;
 
           var result = {
             url: url,
             prix: $("#price").text().trim().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
             tel: $(".action__detail-tel").first().text().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
-            surface: (reSurface.exec(infos))[1],
-            honoraires: (reHonoraires.exec(infos))[1]
+            description: $('p.description').first().text()
           };
+
+          var surface = reSurface.exec(infos);
+          if(surface) {
+            result.surface = surface[1]
+          }
+          var hono = reHonoraires.exec(infos);
+          if(hono) {
+            result.honoraires = hono[1]
+          }
 
           deferred.resolve(result);
         }

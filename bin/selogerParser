@@ -25,6 +25,8 @@ if(process.env.MANDRILL_USERNAME) {
     }
   });
 }
+else
+  transporter = nodemailer.createTransport();
 
 var mailTemplate = jade.compileFile('./views/mail/mail.jade', {pretty: true});
 
@@ -105,7 +107,6 @@ Q.fcall(function () {return url.parse(_url)})
   })
   // we then analyze the content of the page to parse meaningfull informations
   .then(function(newSeloger){
-    console.log('Parsing new articles info');
     function analyzeSelogerUrl(url) {
       var deferred = Q.defer();
       request(url, function (error, response, body) {
@@ -124,7 +125,7 @@ Q.fcall(function () {return url.parse(_url)})
             url: url,
             prix: $("#price").text().trim().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
             tel: $(".action__detail-tel").first().text().replace(/(\r\n|\n|\r)/gm," ").replace(/\s+/g," "),
-            description: $('p.description').text()
+            description: $('p.description').first().text()
           };
 
           var surface = reSurface.exec(infos);
@@ -148,6 +149,10 @@ Q.fcall(function () {return url.parse(_url)})
         promises.push(analyzeSelogerUrl(elt.value))
       }
     });
+    if(promises.length > 1) {
+      console.log('We found new articles, now analyzing them');
+    };
+
     return Q.allSettled(promises);
   })
   .then(function(results){
@@ -174,6 +179,7 @@ Q.fcall(function () {return url.parse(_url)})
   })
   .then(function(results){
     if(results.length > 0) {
+      console.log('sendemail');
       var deferred = Q.defer();
       transporter.sendMail({
           from: 'alerte@seloger.com',
@@ -182,17 +188,18 @@ Q.fcall(function () {return url.parse(_url)})
           html: mailTemplate({result: results})
         },
         function(err, info) {
+          console.log(info);
           if(err)
             deferred.reject(new Error(err));
           else
             deferred.resolve(results);
+          return deferred.promise;
         }
       );
     }
-    else
-      deferred.resolve(results);
-
-    return deferred.promise;
+    else {
+      return results;
+    }
   })
   .catch(function(errors){
     console.error(errors);
