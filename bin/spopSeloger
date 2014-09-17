@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+var redis = require('redis')
+  , url = require('url')
+  , debug = require('debug')('my-application');
+
+/**
+ * redis setup
+ */
+//var redis_url = process.env.REDISCLOUD_URL ? process.env.REDISCLOUD_URL : 'redis://127.0.0.1:6379';
+var redisUrl = url.parse(process.env.REDISCLOUD_URL || 'redis://127.0.0.1:6379');
+var redisStore = redis.createClient(redisUrl.port, redisUrl.hostname);
+
+if(redisUrl.auth) {
+  var auth = (redisUrl.auth.split(':'))[1];
+  redisStore.auth(auth, function(){console.log("redisStore ready")});
+}
+
+redisStore.spop('selogerIds', function(err, info){
+  if(err)
+    console.log(err);
+  else
+    console.log('redis SPOP done');
+  process.exit(1);
+});
