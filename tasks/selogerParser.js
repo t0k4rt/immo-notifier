@@ -14,6 +14,7 @@ var redis = require('redis')
  */
 var transporter = nodemailer.createTransport();
 if(process.env.MANDRILL_USERNAME) {
+  console.log('Mailer use Mandrill');
   transporter = nodemailer.createTransport({
     //debug: true,
     //port: 587,
@@ -25,8 +26,6 @@ if(process.env.MANDRILL_USERNAME) {
     }
   });
 }
-else
-  transporter = nodemailer.createTransport();
 
 var mailTemplate = jade.compileFile('./views/mail/mail.jade', {pretty: true});
 
