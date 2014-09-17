@@ -197,13 +197,12 @@ Q.fcall(function () {return url.parse(_url)})
         }
       );
     }
-    else {
-      return results;
-    }
+    return results;
   })
   .catch(function(errors){
     console.error(errors);
   })
   .done(function(results){
+    console.log(results);
     process.exit(1);
   });
