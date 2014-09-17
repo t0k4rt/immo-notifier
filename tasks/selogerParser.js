@@ -192,9 +192,9 @@ Q.fcall(function () {return url.parse(_url)})
             deferred.reject(new Error(err));
           else
             deferred.resolve(results);
-          return deferred.promise;
         }
       );
+      return deferred.promise;
     }
     return results;
   })

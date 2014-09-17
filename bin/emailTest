@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+var nodemailer = require('nodemailer');
+
+/**
+ * Mandrill setup
+ */
+var transporter = nodemailer.createTransport();
+if(process.env.MANDRILL_USERNAME) {
+  console.log('Mailer use Mandrill');
+  transporter = nodemailer.createTransport({
+    //debug: true,
+    //port: 587,
+    //host: "smtp.mandrillapp.com",
+    service: 'Mandrill',
+    auth: {
+      user: process.env.MANDRILL_USERNAME,
+      pass: process.env.MANDRILL_APIKEY
+    }
+  });
+}
+
+console.log('sendemail');
+transporter.sendMail({
+  from: 'alerte@seloger.com',
+  to: 'alexandre.assouad@gmail.com',
+  subject: 'testemail',
+  html: '<h1>Coucou !</h1>'
+    },
+    function(err, info) {
+      console.log(info);
+      if(err)
+        console.log('error');
+    }
+);
